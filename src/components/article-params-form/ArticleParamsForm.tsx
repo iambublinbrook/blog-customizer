@@ -1,6 +1,7 @@
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
-import { useState, useRef } from 'react';
+import { Text } from 'src/ui/text';
+import { useState, useRef, useEffect } from 'react';
 import {
 	backgroundColors,
 	fontFamilyOptions,
@@ -26,6 +27,7 @@ type ArticleParamsFormProps = {
 };
 
 export const ArticleParamsForm = ({
+	currentSettings,
 	onApply,
 	onReset,
 }: ArticleParamsFormProps) => {
@@ -41,12 +43,11 @@ export const ArticleParamsForm = ({
 		onChange: setIsPanelOpen,
 	});
 
-	/*useEffect(() => {
+	useEffect(() => {
 		if (isPanelOpen) {
-			setInitialOnOpen({ ...currentSettings });
-			setTempSettings({ ...currentSettings })
+			setTempSettings({ ...currentSettings });
 		}
-	}, [isPanelOpen]);*/
+	}, [isPanelOpen, currentSettings]);
 
 	const handleApply = () => {
 		onApply(tempSettings);
@@ -66,75 +67,75 @@ export const ArticleParamsForm = ({
 				onClick={() => setIsPanelOpen((prev) => !prev)}
 			/>
 
-			{isPanelOpen && (
-				<aside
-					ref={panelRef}
-					className={clsx(
-						styles.container,
-						isPanelOpen && styles.container_open
-					)}>
-					<form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-						<Select
-							options={fontFamilyOptions}
-							selected={tempSettings.fontFamilyOption}
-							onChange={(value) =>
-								setTempSettings({ ...tempSettings, fontFamilyOption: value })
-							}
-							title='Шрифт'
-						/>
-						<RadioGroup
-							name='fontsize'
-							options={fontSizeOptions}
-							selected={tempSettings.fontSizeOption}
-							onChange={(value) =>
-								setTempSettings({ ...tempSettings, fontSizeOption: value })
-							}
-							title='Размер шрифта'
-						/>
-						<Select
-							options={fontColors}
-							selected={tempSettings.fontColor}
-							onChange={(value) =>
-								setTempSettings({ ...tempSettings, fontColor: value })
-							}
-							title='Цвет шрифта'
-						/>
+			<aside
+				ref={panelRef}
+				className={clsx(styles.container, {
+					[styles.container_open]: isPanelOpen,
+				})}>
+				<form
+					className={styles.form}
+					onSubmit={(e) => {
+						e.preventDefault();
+						handleApply();
+					}}>
+					<Text weight={800} size={31} uppercase>
+						Задайте параметры
+					</Text>
+					<Select
+						options={fontFamilyOptions}
+						selected={tempSettings.fontFamilyOption}
+						onChange={(value) =>
+							setTempSettings({ ...tempSettings, fontFamilyOption: value })
+						}
+						title='Шрифт'
+					/>
+					<RadioGroup
+						name='fontsize'
+						options={fontSizeOptions}
+						selected={tempSettings.fontSizeOption}
+						onChange={(value) =>
+							setTempSettings({ ...tempSettings, fontSizeOption: value })
+						}
+						title='Размер шрифта'
+					/>
+					<Select
+						options={fontColors}
+						selected={tempSettings.fontColor}
+						onChange={(value) =>
+							setTempSettings({ ...tempSettings, fontColor: value })
+						}
+						title='Цвет шрифта'
+					/>
 
-						<Separator />
-						<Select
-							options={backgroundColors}
-							selected={tempSettings.backgroundColor}
-							onChange={(value) =>
-								setTempSettings({ ...tempSettings, backgroundColor: value })
-							}
-							title='Цвет фона'
-						/>
-						<Select
-							options={contentWidthArr}
-							selected={tempSettings.contentWidth}
-							onChange={(value) =>
-								setTempSettings({ ...tempSettings, contentWidth: value })
-							}
-							title='Ширина контента'
-						/>
+					<Separator />
+					<Select
+						options={backgroundColors}
+						selected={tempSettings.backgroundColor}
+						onChange={(value) =>
+							setTempSettings({ ...tempSettings, backgroundColor: value })
+						}
+						title='Цвет фона'
+					/>
+					<Select
+						options={contentWidthArr}
+						selected={tempSettings.contentWidth}
+						onChange={(value) =>
+							setTempSettings({ ...tempSettings, contentWidth: value })
+						}
+						title='Ширина контента'
+					/>
 
-						<div className={styles.bottomContainer}>
-							<Button
-								title='Сбросить'
-								htmlType='button'
-								type='clear'
-								onClick={handleReset}
-							/>
-							<Button
-								title='Применить'
-								htmlType='button'
-								type='apply'
-								onClick={handleApply}
-							/>
-						</div>
-					</form>
-				</aside>
-			)}
+					<div className={styles.bottomContainer}>
+						<Button
+							title='Сбросить'
+							htmlType='button'
+							type='clear'
+							onClick={handleReset}
+						/>
+						<Button title='Применить' htmlType='submit' type='apply' />
+					</div>
+				</form>
+			</aside>
 		</>
 	);
 };
